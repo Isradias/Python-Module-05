@@ -18,10 +18,8 @@ class DataProcessor(ABC):
     def output(self) -> tuple[int, str]:
         if len(self.values) == 0:
             raise Exception("Empty list")
-        to_return = self.values[0]
-        self.values.pop(0)
         self.nb_values += 1
-        return (self.nb_values, to_return)
+        return (self.nb_values, self.values.pop(0))
 
 class NumericProcessor(DataProcessor):
     def __init__(self):
@@ -70,7 +68,7 @@ class TextProcessor(DataProcessor):
 class LogProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
         if type(data) == list:
-            for value in data:
+            for value in data.values():
                 if type(value) != dict:
                     return False
         else:
@@ -79,7 +77,16 @@ class LogProcessor(DataProcessor):
         return True
 
     def ingest(self, data: Any) -> None:
-        return
+        if self.validate(data) == False:
+            raise TypeError("Improper dict data")
+        if type(data) == list:
+            for dictionary in data:
+                for value in dictionary.values():
+                    self.values.append(value)
+        else:
+            for value in data.values():
+                self.values.append(data)
+
 
 if __name__ == "__main__":
     print("=== Code Nexus - Data Processor ===")
@@ -114,5 +121,7 @@ if __name__ == "__main__":
     print(f"  Text value {result[0]}: {result[1]}")
 
     print("\nTesting Text Processor...")
+    print(f"  Processing data: [5, 4, 3, 2, 1]:")
+    
 
     
