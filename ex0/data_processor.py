@@ -88,6 +88,7 @@ class LogProcessor(DataProcessor):
         else:
             self.values.append(f"{data["log_level"]}: {data["log_message"]}")
 
+
 if __name__ == "__main__":
     print("=== Code Nexus - Data Processor ===")
     print("Testing Numeric Processor...")
