@@ -98,7 +98,7 @@ if __name__ == "__main__":
     print(f"  Trying to validate input 'Hello': {num_proc.validate("Hello")}")
     try:
         print("  Test invalid ingestion of string 'foo' "
-              f"without prior validation:")
+              "without prior validation:")
         num_proc.ingest("foo")
     except Exception as e:
         print(f"  Got exception: {e}")
