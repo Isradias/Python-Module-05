@@ -3,8 +3,8 @@ from typing import Any
 
 
 class DataProcessor(ABC):
-    def __init__(self):
-        self.values: list = []
+    def __init__(self) -> None:
+        self.values: list[str] = []
         self.nb_values: int = -1
 
     @abstractmethod
@@ -23,7 +23,7 @@ class DataProcessor(ABC):
 
 
 class NumericProcessor(DataProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def validate(self, data: Any) -> bool:
@@ -90,8 +90,8 @@ class LogProcessor(DataProcessor):
 
 
 class DataStream:
-    def __init__(self):
-        self.processors: dict = {}
+    def __init__(self) -> None:
+        self.processors: dict[DataProcessor, int] = {}
 
     def register_processor(self, proc: DataProcessor) -> None:
         for processor in self.processors:
@@ -100,7 +100,7 @@ class DataStream:
         self.processors.update({proc: 0})
 
     def process_stream(self, stream: list[Any]) -> None:
-        self.remaining: list = stream.copy()
+        self.remaining: list[Any] = stream.copy()
         for value in stream:
             for proc in self.processors:
                 try:
@@ -131,7 +131,7 @@ class DataStream:
 
 def main() -> None:
 
-    sample: list = [
+    sample: list[Any] = [
         'Hello world',
         [3.14, -1, 2.71],
         [{'log_level': 'WARNING',
@@ -143,23 +143,23 @@ def main() -> None:
 
     print("=== Code Nexus - Data Stream ===")
     print("Initialize Data Stream...")
-    general_processor = DataStream()
+    general_processor: DataStream = DataStream()
 
     general_processor.print_processors_stats()
     print("\n=== Number processor added ===")
-    num_proc = NumericProcessor()
+    num_proc: NumericProcessor = NumericProcessor()
     general_processor.register_processor(num_proc)
     general_processor.process_stream(sample)
     general_processor.print_processors_stats()
 
     print("\n=== Text processor added ===")
-    text_proc = TextProcessor()
+    text_proc: TextProcessor = TextProcessor()
     general_processor.register_processor(text_proc)
     general_processor.process_stream(sample)
     general_processor.print_processors_stats()
 
     print("\n=== Log processor added ===")
-    log_proc = LogProcessor()
+    log_proc: LogProcessor = LogProcessor()
     general_processor.register_processor(log_proc)
     general_processor.process_stream(sample)
     general_processor.print_processors_stats()

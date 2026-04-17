@@ -91,16 +91,16 @@ class LogProcessor(DataProcessor):
 
 class DataStream:
     def __init__(self) -> None:
-        self.processors: dict[str, int] = {}
+        self.processors: dict[DataProcessor, int] = {}
 
     def register_processor(self, proc: DataProcessor) -> None:
         for processor in self.processors:
-            if isinstance(processor, type(proc)):
+            if type(processor) is type(proc):
                 raise Exception("This type of processor already exists.")
         self.processors.update({proc: 0})
 
     def process_stream(self, stream: list[Any]) -> None:
-        self.remaining: list = stream.copy()
+        self.remaining: list[Any] = stream.copy()
         for value in stream:
             for proc in self.processors:
                 try:
@@ -131,7 +131,7 @@ class DataStream:
 
     def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
         for proc in self.processors:
-            to_export: list = []
+            to_export: list[tuple[int, str]] = []
             for x in range(nb):
                 try:
                     to_export.append(proc.output())
@@ -165,7 +165,7 @@ class ExportJSON:
 
 
 def main() -> None:
-    sample: list = [
+    sample: list[Any] = [
         'Hello world',
         [3.14, -1, 2.71],
         [{'log_level': 'WARNING',
@@ -175,10 +175,10 @@ def main() -> None:
         42,
         ['Hi', 'five']]
 
-    general_processor = DataStream()
-    num_proc = NumericProcessor()
-    text_proc = TextProcessor()
-    log_proc = LogProcessor()
+    general_processor: DataStream = DataStream()
+    num_proc: NumericProcessor = NumericProcessor()
+    text_proc: TextProcessor = TextProcessor()
+    log_proc: LogProcessor = LogProcessor()
     csv_export: ExportPlugin = ExportCSV()
     json_export: ExportPlugin = ExportJSON()
     general_processor.register_processor(num_proc)

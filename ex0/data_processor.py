@@ -3,8 +3,8 @@ from typing import Any
 
 
 class DataProcessor(ABC):
-    def __init__(self):
-        self.values: list = []
+    def __init__(self) -> None:
+        self.values: list[str] = []
         self.nb_values: int = -1
 
     @abstractmethod
@@ -23,7 +23,7 @@ class DataProcessor(ABC):
 
 
 class NumericProcessor(DataProcessor):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def validate(self, data: Any) -> bool:
@@ -92,21 +92,22 @@ class LogProcessor(DataProcessor):
 if __name__ == "__main__":
     print("=== Code Nexus - Data Processor ===")
     print("Testing Numeric Processor...")
-    processor = NumericProcessor()
+    num_proc: NumericProcessor = NumericProcessor()
 
-    print(f"  Trying to validate input '42': {processor.validate(42)}")
-    print(f"  Trying to validate input 'Hello': {processor.validate("Hello")}")
+    print(f"  Trying to validate input '42': {num_proc.validate(42)}")
+    print(f"  Trying to validate input 'Hello': {num_proc.validate("Hello")}")
     try:
         print("  Test invalid ingestion of string 'foo' "
-              f"without prior validation: {processor.ingest("foo")}")
+              f"without prior validation:")
+        num_proc.ingest("foo")
     except Exception as e:
         print(f"  Got exception: {e}")
     print("  Processing data: [5, 4, 3, 2, 1]:")
-    processor.ingest([5, 4, 3, 2, 1])
+    num_proc.ingest([5, 4, 3, 2, 1])
     print("  Extracting 42 values")
     try:
         for n in range(42):
-            result = processor.output()
+            result = num_proc.output()
             rank = result[0]
             value = result[1]
             print(f"  Numeric value {rank}: {value}")
@@ -114,25 +115,25 @@ if __name__ == "__main__":
         print(f"  Got exception: {e}")
 
     print("\nTesting Text Processor...")
-    processor = TextProcessor()
-    print(f"  Trying to validate input '42': {processor.validate(42)}")
+    text_proc = TextProcessor()
+    print(f"  Trying to validate input '42': {text_proc.validate(42)}")
     print("  Processing data: ['Hello', 'Nexus', 'World']:")
-    processor.ingest(['Hello', 'Nexus', 'World'])
+    text_proc.ingest(['Hello', 'Nexus', 'World'])
     print("  Extracting 1 value...")
-    result = processor.output()
+    result = text_proc.output()
     print(f"  Text value {result[0]}: {result[1]}")
 
     print("\nTesting Text Processor...")
-    processor = LogProcessor()
-    print(f"  Trying to validate input 'Hello': {processor.validate('Hello')}")
+    log_proc = LogProcessor()
+    print(f"  Trying to validate input 'Hello': {log_proc.validate('Hello')}")
     data = [{'log_level': 'NOTICE', 'log_message': 'Connection to server'},
             {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}]
     print(f"  Processing data: {data}")
-    processor.ingest(data)
+    log_proc.ingest(data)
     print("  Extracting 2 values...")
     try:
         for n in range(3):
-            result = processor.output()
+            result = log_proc.output()
             rank = result[0]
             value = result[1]
             print(f"  Log value {rank}: {value}")
