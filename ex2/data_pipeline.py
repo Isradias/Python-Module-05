@@ -89,6 +89,30 @@ class LogProcessor(DataProcessor):
             self.values.append(f"{data["log_level"]}: {data["log_message"]}")
 
 
+class ExportPlugin(Protocol):
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        ...
+
+
+class ExportCSV:
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        print("CSV Output:")
+        if len(data) == 0:
+            print("--No itens to output")
+            return
+        print(",".join(value[1] for value in data))
+
+
+class ExportJSON:
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        print("JSON Output:")
+        if len(data) == 0:
+            print("--No itens to output")
+            return
+        output = {"item " + str(value[0]): value[1] for value in data}
+        print(output)
+
+
 class DataStream:
     def __init__(self) -> None:
         self.processors: dict[DataProcessor, int] = {}
@@ -138,30 +162,6 @@ class DataStream:
                 except Exception:
                     break
             plugin.process_output(to_export)
-
-
-class ExportPlugin(Protocol):
-    def process_output(self, data: list[tuple[int, str]]) -> None:
-        ...
-
-
-class ExportCSV:
-    def process_output(self, data: list[tuple[int, str]]) -> None:
-        print("CSV Output:")
-        if len(data) == 0:
-            print("--No itens to output")
-            return
-        print(",".join(value[1] for value in data))
-
-
-class ExportJSON:
-    def process_output(self, data: list[tuple[int, str]]) -> None:
-        print("JSON Output:")
-        if len(data) == 0:
-            print("--No itens to output")
-            return
-        output = {"item " + str(value[0]): value[1] for value in data}
-        print(output)
 
 
 def main() -> None:
